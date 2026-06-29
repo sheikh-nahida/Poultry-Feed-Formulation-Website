@@ -77,11 +77,12 @@ WSGI_APPLICATION = 'feed_website.wsgi.application'
 # DATABASE
 # =====================================
 
-DATABASES = {
-    "default": dj_database_url.config(
-         default="postgresql://postgres:Nahida@14@localhost:5432/poultry_feed_db"
-    )
-}
+if os.environ.get("DATABASE_URL"):
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.environ.get("DATABASE_URL")
+        )
+    }
 else:
     DATABASES = {
         "default": {
