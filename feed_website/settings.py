@@ -2,13 +2,22 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-8ijig6_cy*9mi^2hwyy%2k#x+v2ja!puz3^6r39tb*gi%n1(d5'
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-8ijig6_cy*9mi^2hwyy%2k#x+v2ja!puz3^6r39tb*gi%n1(d5"
+)
+import os
 
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    ".onrender.com",
+    "127.0.0.1",
+    "localhost",
+]
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://*.onrender.com",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
 ]
@@ -108,12 +117,13 @@ USE_TZ = True
 # =====================================
 # STATIC FILES
 # =====================================
-STATIC_URL = 'static/'
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
