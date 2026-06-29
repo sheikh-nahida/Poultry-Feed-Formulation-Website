@@ -1,0 +1,513 @@
+{% extends 'formulation/base.html' %}
+{% block content %}
+
+<div class="max-w-7xl mx-auto mt-6 space-y-6 px-4">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center p-6 bg-blue-600 text-white rounded-xl">
+
+        <h2 class="text-2xl font-bold">
+            ⚙️ Feed Optimization (Genetic Algorithm)
+        </h2>
+
+        <button onclick="window.print()"
+                class="bg-white text-blue-600 px-4 py-2 rounded">
+            📄 Export PDF
+        </button>
+
+    </div>
+
+    <!-- FORM -->
+    <form method="POST"
+          action="{% url 'optimize_feed' %}"
+          class="bg-white p-6 rounded-xl shadow">
+
+        {% csrf_token %}
+
+        <div class="grid md:grid-cols-3 gap-4">
+
+            <!-- Animal -->
+            <select name="animal_type"
+                    onchange="window.location.href='?animal_type=' + this.value"
+                    class="border p-2 rounded"
+                    required>
+
+                <option value="">
+                    Animal
+                </option>
+
+                {% for a in animal_types %}
+
+                <option value="{{ a }}"
+                        {% if animal_type == a %}selected{% endif %}>
+
+                    {{ a }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <!-- Stage -->
+            <select name="life_stage"
+                    class="border p-2 rounded"
+                    required>
+
+                <option value="">
+                    Stage
+                </option>
+
+                {% for s in life_stages %}
+
+                <option value="{{ s }}"
+                        {% if life_stage == s %}selected{% endif %}>
+
+                    {{ s }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <!-- Button -->
+            <button type="submit"
+                    class="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600">
+
+                ⚡ Run Optimization
+
+            </button>
+
+        </div>
+
+    </form>
+
+    <!-- ERROR -->
+    {% if error %}
+
+    <div class="bg-red-100 text-red-700 p-4 rounded">
+        {{ error }}
+    </div>
+
+    {% endif %}
+
+    <!-- RESULTS -->
+    {% if result and result.success %}
+
+    <!-- COST -->
+    <div class="bg-green-100 p-4 rounded">
+
+        <h3 class="font-bold">
+            Optimized Cost
+        </h3>
+
+        <p class="text-2xl font-bold">
+            ₹ {{ result.total_cost|floatformat:2 }}
+        </p>
+
+    </div>
+
+    <!-- INGREDIENT TABLE -->
+    <div class="bg-white p-6 rounded-xl shadow">
+
+        <h3 class="font-bold mb-4">
+            🥣 Ingredient Composition
+        </h3>
+
+        <table class="w-full border text-sm">
+
+            <thead>
+
+                <tr class="bg-gray-100">
+
+                    <th class="border p-2">
+                        Ingredient
+                    </th>
+
+                    <th class="border p-2">
+                        Inclusion (%)
+                    </th>
+
+                    <th class="border p-2">
+                        Cost
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in result.ingredients %}
+
+                <tr>
+
+                    <td class="border p-2">
+                        {{ item.name }}
+                    </td>
+
+                    <td class="border p-2">
+                        {{ item.inclusion|floatformat:2 }}
+                    </td>
+
+                    <td class="border p-2">
+                        ₹ {{ item.cost|floatformat:2 }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- NUTRIENT TABLE -->
+    <div class="bg-white p-6 rounded-xl shadow">
+
+        <h3 class="font-bold mb-4">
+            ✅ Nutrient Status
+        </h3>
+
+        <table class="w-full border text-sm">
+
+            <thead>
+
+                <tr class="bg-gray-100">
+
+                    <th class="border px-2 py-1">
+                        Nutrient
+                    </th>
+
+                    <th class="border px-2 py-1">
+                        Min
+                    </th>
+
+                    <th class="border px-2 py-1">
+                        Max
+                    </th>
+
+                    <th class="border px-2 py-1">
+                        Achieved
+                    </th>
+
+                    <th class="border px-2 py-1">
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for n, v in combined_nutrients.items %}
+
+                <tr>
+
+                    <!-- Nutrient -->
+                    <td class="border px-2 py-1">
+                        {{ n }}
+                    </td>
+
+                    <!-- Min -->
+                    <td class="border px-2 py-1">
+
+                        {% if v.min != None %}
+                            {{ v.min }}
+                        {% else %}
+                            -
+                        {% endif %}
+
+                    </td>
+
+                    <!-- Max -->
+                    <td class="border px-2 py-1">
+
+                        {% if v.max != None %}
+                            {{ v.max }}
+                        {% else %}
+                            -
+                        {% endif %}
+
+                    </td>
+
+                    <!-- Achieved -->
+                    <td class="border px-2 py-1">
+                        {{ v.achieved|floatformat:2 }}
+                    </td>
+
+                    <!-- Status -->
+                    <td class="border px-2 py-1">
+
+                        {% if v.status %}
+
+                             ✅ OK
+
+                        {% else %}
+
+                            ❌ Violation
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- CHARTS -->
+    <div class="space-y-6">
+
+        <!-- PIE -->
+        <div class="bg-white p-6 rounded-xl shadow">
+
+            <h3 class="font-bold mb-4">
+                Ingredient Distribution
+            </h3>
+
+            <div style="height:400px;">
+                <canvas id="pieChart"></canvas>
+            </div>
+
+        </div>
+
+        <!-- NUTRIENT CHART -->
+        <div class="bg-white p-6 rounded-xl shadow">
+
+            <h3 class="font-bold mb-4">
+                Nutrient Comparison
+            </h3>
+
+            <div style="height:400px;">
+                <canvas id="nutrientChart"></canvas>
+            </div>
+
+        </div>
+
+        <!-- CONVERGENCE -->
+        <div class="bg-white p-6 rounded-xl shadow">
+
+            <h3 class="font-bold mb-4">
+                GA Convergence
+            </h3>
+
+            <div style="height:400px;">
+                <canvas id="convergenceChart"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+<!-- CHART JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% if result and result.success %}
+
+{{ ingredient_chart_data|json_script:"ingredients-data" }}
+{{ combined_nutrients|json_script:"nutrients-data" }}
+{{ convergence|json_script:"conv-data" }}
+
+<script>
+
+const ingredients =
+    JSON.parse(
+        document.getElementById(
+            "ingredients-data"
+        ).textContent
+    );
+
+const nutrients =
+    JSON.parse(
+        document.getElementById(
+            "nutrients-data"
+        ).textContent
+    );
+
+const convergence =
+    JSON.parse(
+        document.getElementById(
+            "conv-data"
+        ).textContent
+    );
+
+const colors = [
+
+    "#4E79A7",
+    "#59A14F",
+    "#F28E2B",
+    "#E15759",
+    "#76B7B2",
+    "#EDC948",
+    "#B07AA1",
+    "#FF9DA7",
+    "#9C755F",
+    "#BAB0AC"
+
+];
+
+
+// =====================================================
+// PIE CHART
+// =====================================================
+new Chart(
+
+    document.getElementById(
+        "pieChart"
+    ),
+
+    {
+
+        type: "pie",
+
+        data: {
+
+            labels: Object.keys(
+                ingredients
+            ),
+
+            datasets: [{
+
+                data: Object.values(
+                    ingredients
+                ),
+
+                backgroundColor: colors
+
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false
+
+        }
+    }
+);
+
+
+// =====================================================
+// NUTRIENT CHART
+// =====================================================
+new Chart(
+
+    document.getElementById(
+        "nutrientChart"
+    ),
+
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: Object.keys(
+                nutrients
+            ),
+
+            datasets: [
+
+                {
+
+                    label: "Achieved",
+
+                    data: Object.values(
+                        nutrients
+                    ).map(
+                        v => v.achieved
+                    ),
+
+                    backgroundColor: "#59A14F"
+                },
+
+                {
+
+                    label: "Minimum",
+
+                    data: Object.values(
+                        nutrients
+                    ).map(
+                        v => v.min || 0
+                    ),
+
+                    backgroundColor: "#E15759"
+                }
+            ]
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false
+
+        }
+    }
+);
+
+
+// =====================================================
+// CONVERGENCE CHART
+// =====================================================
+new Chart(
+
+    document.getElementById(
+        "convergenceChart"
+    ),
+
+    {
+
+        type: "line",
+
+        data: {
+
+            labels: convergence.map(
+                (_, i) => i + 1
+            ),
+
+            datasets: [{
+
+                label: "Fitness / Cost",
+
+                data: convergence,
+
+                borderColor: "#4E79A7",
+
+                fill: false,
+
+                tension: 0.3
+
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false
+
+        }
+    }
+);
+
+</script>
+
+{% endif %}
+
+{% endblock %}

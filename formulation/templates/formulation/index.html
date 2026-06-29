@@ -1,0 +1,116 @@
+{% extends 'formulation/base.html' %}
+
+{% block content %}
+
+<!-- HERO -->
+
+<div class="bg-gradient-to-r from-blue-400 to-indigo-500
+            rounded-2xl p-8 text-white shadow-lg mb-8">
+
+    <h1 class="text-3xl font-bold mb-2">
+        🐔 FeedOptima
+    </h1>
+
+    <p class="text-blue-70">
+        Intelligent Poultry Feed Formulation using Genetic Algorithms
+    </p>
+
+    <p class="text-blue-150 mt-2 text-sm">
+        Optimize feed cost while satisfying BIS nutrient requirements.
+    </p>
+
+</div>
+
+<!-- KPI CARDS -->
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+    <div class="bg-white rounded-xl p-5 shadow">
+        <p class="text-sm text-gray-400">Ingredients</p>
+        <h3 class="text-2xl font-bold text-gray-800">150+</h3>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 shadow">
+        <p class="text-sm text-gray-400">Nutrients</p>
+        <h3 class="text-2xl font-bold text-gray-700">40+</h3>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 shadow">
+        <p class="text-sm text-gray-400">Animal Stages</p>
+        <h3 class="text-2xl font-bold text-gray-700">12+</h3>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 shadow">
+        <p class="text-sm text-gray-400">Optimization</p>
+        <h3 class="text-2xl font-bold text-green-500">GA Enabled</h3>
+    </div>
+
+</div>
+
+<!-- ACTION CARDS -->
+
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+    <a href="{% url 'edit_ingredients' %}"
+       class="bg-white rounded-xl p-5 shadow hover:shadow-xl transition">
+
+        <div class="text-3xl mb-2">🥣</div>
+
+        <h3 class="text-lg font-bold mb-2">
+            Ingredients
+        </h3>
+
+        <p class="text-sm text-gray-400">
+            Add, edit and manage ingredient nutrient values.
+        </p>
+
+    </a>
+
+    <a href="{% url 'add_requirement' %}"
+       class="bg-white rounded-xl p-5 shadow hover:shadow-xl transition">
+
+        <div class="text-3xl mb-2">📊</div>
+
+        <h3 class="text-lg font-bold mb-2">
+            Requirements
+        </h3>
+
+        <p class="text-sm text-gray-400">
+            Configure BIS nutrient constraints.
+        </p>
+
+    </a>
+
+    <a href="{% url 'optimize_feed' %}?animal_type=Broiler&life_stage=starter"
+       class="bg-white rounded-xl p-5 shadow hover:shadow-xl transition">
+
+        <div class="text-3xl mb-2">⚙️</div>
+
+        <h3 class="text-lg font-bold mb-2">
+            Optimize Feed
+        </h3>
+
+        <p class="text-sm text-gray-400">
+            Generate least-cost feed formulations.
+        </p>
+
+    </a>
+
+    <a href="{% url 'formula_history' %}"
+       class="bg-white rounded-xl p-5 shadow hover:shadow-xl transition">
+
+        <div class="text-3xl mb-2">📜</div>
+
+        <h3 class="text-lg font-bold mb-2">
+            Feed History
+        </h3>
+
+        <p class="text-sm text-gray-400">
+            View previously generated formulas.
+        </p>
+
+    </a>
+
+</div>
+
+{% endblock %}

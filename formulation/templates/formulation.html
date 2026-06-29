@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feed Formulation</title>
+</head>
+<body>
+    <h1>🐔 Feed Formulation Optimizer</h1>
+
+    {% if result %}
+        <h3>Status: {{ result.status }}</h3>
+        <h3>Total Cost: {{ result.total_cost }}</h3>
+        <ul>
+            {% for name, qty in result.ingredients.items %}
+                <li>{{ name }}: {{ qty }} kg</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit">Run Optimization</button>
+        </form>
+    {% endif %}
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feed Formulation Optimizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fa;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #0066cc;
+        }
+        form {
+            margin: 30px auto;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 40px;
+            background-color: #eaf7ff;
+            padding: 25px;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>🐔 Feed Formulation Optimizer</h1>
+
+    {% if result %}
+        <div class="result">
+            <h3>Status: {{ result.status }}</h3>
+            <h3>Total Cost: ₹{{ result.total_cost }}</h3>
+            <ul>
+                {% for name, qty in result.ingredients.items %}
+                    <li><b>{{ name }}</b>: {{ qty }} kg</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit">Run Optimization</button>
+        </form>
+    {% endif %}
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feed Formulation Optimizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9fafc;
+            text-align: center;
+            padding: 40px;
+        }
+        h1 {
+            color: #0066cc;
+        }
+        form {
+            margin-top: 20px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 30px;
+            background-color: #eaf4fc;
+            border-radius: 10px;
+            padding: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <h1>🐔 Feed Formulation Optimizer</h1>
+
+    {% if result %}
+        <div class="result">
+            <h3>Status: {{ result.status }}</h3>
+            <h3>Total Cost: ₹{{ result.total_cost }}</h3>
+            <ul style="text-align:left;">
+                {% for name, qty in result.ingredients.items %}
+                    <li><b>{{ name }}</b>: {{ qty }} kg</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit">Run Optimization</button>
+        </form>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,112 @@
+{% extends 'formulation/base.html' %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto space-y-6">
+
+```
+<!-- HEADER -->
+
+<div class="bg-gradient-to-r from-green-600 to-emerald-700 rounded-xl p-6 text-white shadow">
+
+    <h2 class="text-3xl font-bold">
+        ➕ Add Ingredients
+    </h2>
+
+    <p class="text-green-100 mt-2">
+        Add new feed ingredients with nutrient composition and inclusion limits.
+    </p>
+
+</div>
+
+<!-- SUCCESS MESSAGES -->
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-lg shadow">
+            ✅ {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- FORM -->
+
+<form method="post">
+
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    <div class="space-y-6">
+
+        {% for form in formset %}
+
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+
+            <div class="flex items-center justify-between mb-4">
+
+                <h3 class="text-lg font-bold text-gray-800">
+                    Ingredient {{ forloop.counter }}
+                </h3>
+
+                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                    New Entry
+                </span>
+
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                {% for field in form %}
+
+                <div>
+
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.errors %}
+                        <p class="text-red-500 text-xs mt-1">
+                            {{ field.errors }}
+                        </p>
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- BUTTONS -->
+
+    <div class="flex gap-4 mt-6">
+
+        <button type="submit"
+                class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg shadow font-semibold">
+
+            💾 Save Ingredients
+
+        </button>
+
+        <a href="{% url 'index' %}"
+           class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-8 py-3 rounded-lg shadow">
+
+            ← Back
+
+        </a>
+
+    </div>
+
+</form>
+```
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,261 @@
+{% extends 'formulation/base.html' %}
+
+{% block content %}
+
+<div class="space-y-6">
+
+<!-- HEADER -->
+<div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-6 text-white shadow">
+
+    <div class="flex justify-between items-center">
+
+        <div>
+            <h2 class="text-3xl font-bold">
+                🥣 Ingredient Management
+            </h2>
+
+            <p class="text-blue-100 mt-2">
+                Update nutrient composition, cost and inclusion limits.
+            </p>
+        </div>
+
+        <button form="ingredientForm"
+                type="submit"
+                class="bg-white text-blue-700 px-6 py-3 rounded-lg font-semibold shadow hover:scale-105 transition">
+
+            💾 Save Changes
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- STATS -->
+
+<div class="grid md:grid-cols-4 gap-4">
+
+    <div class="bg-white rounded-xl shadow p-4">
+        <div class="text-gray-150 text-sm">Ingredients</div>
+        <div class="text-3xl font-bold">{{ ingredients.count }}</div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-4">
+        <div class="text-gray-150 text-sm">Protein Sources</div>
+        <div class="text-3xl font-bold text-green-300">
+            {{ ingredients.count }}
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-4">
+        <div class="text-gray-150 text-sm">Editable Nutrients</div>
+        <div class="text-3xl font-bold text-blue-300">
+            20+
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-4">
+        <div class="text-gray-150 text-sm">Optimization Ready</div>
+        <div class="text-3xl font-bold text-purple-300">
+            ✓
+        </div>
+    </div>
+
+</div>
+
+<!-- SEARCH -->
+
+<div class="bg-white p-3 rounded-xl shadow">
+
+    <input type="text"
+           id="searchInput"
+           placeholder="🔍 Search ingredient..."
+           class="w-full border rounded-lg px-3 py-2">
+
+</div>
+
+<!-- FORM -->
+
+<form method="post" id="ingredientForm">
+
+    {% csrf_token %}
+
+    <div class="bg-white rounded-xl shadow overflow-auto">
+
+        <table class="w-full text-sm border-collapse">
+
+            <thead class="sticky top-0 z-20">
+
+                <tr>
+
+                    <th class="bg-gray-800 text-white p-3">
+                        Ingredient
+                    </th>
+
+                    <th class="bg-blue-600 text-white p-3">
+                        Protein
+                    </th>
+
+                    <th class="bg-blue-600 text-white p-3">
+                        Energy
+                    </th>
+
+                    <th class="bg-blue-600 text-white p-3">
+                        EE
+                    </th>
+
+                    <th class="bg-blue-600 text-white p-3">
+                        CF
+                    </th>
+
+                    <th class="bg-green-600 text-white p-3">
+                        Ca
+                    </th>
+
+                    <th class="bg-green-600 text-white p-3">
+                        P
+                    </th>
+
+                    <th class="bg-green-600 text-white p-3">
+                        Av.P
+                    </th>
+
+                    <th class="bg-green-600 text-white p-3">
+                        Salt
+                    </th>
+
+                    <th class="bg-green-600 text-white p-3">
+                        Na
+                    </th>
+
+                    <th class="bg-green-600 text-white p-3">
+                        Cl
+                    </th>
+
+                    <th class="bg-yellow-600 text-white p-3">
+                        Lys
+                    </th>
+
+                    <th class="bg-yellow-600 text-white p-3">
+                        Met
+                    </th>
+
+                    <th class="bg-yellow-600 text-white p-3">
+                        Cys
+                    </th>
+
+                    <th class="bg-yellow-600 text-white p-3">
+                        Met+Cys
+                    </th>
+
+                    <th class="bg-yellow-600 text-white p-3">
+                        Thr
+                    </th>
+
+                    <th class="bg-yellow-600 text-white p-3">
+                        Arg
+                    </th>
+
+                    <th class="bg-yellow-600 text-white p-3">
+                        Leu
+                    </th>
+
+                    <th class="bg-yellow-600 text-white p-3">
+                        Trp
+                    </th>
+
+                    <th class="bg-purple-600 text-white p-3">
+                        Linoleic
+                    </th>
+
+                    <th class="bg-purple-600 text-white p-3">
+                        Choline
+                    </th>
+
+                    <th class="bg-red-600 text-white p-3">
+                        Cost
+                    </th>
+
+                    <th class="bg-gray-700 text-white p-3">
+                        Min %
+                    </th>
+
+                    <th class="bg-gray-700 text-white p-3">
+                        Max %
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for ing in ingredients %}
+
+            <tr class="ingredient-row hover:bg-blue-50">
+
+                <td class="border p-2 font-semibold">
+                    {{ ing.name }}
+                </td>
+
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="protein_{{ ing.id }}" value="{{ ing.protein }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="1" name="energy_{{ ing.id }}" value="{{ ing.energy }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="ether_extract_{{ ing.id }}" value="{{ ing.ether_extract }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="crude_fiber_{{ ing.id }}" value="{{ ing.crude_fiber }}"></td>
+
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="calcium_{{ ing.id }}" value="{{ ing.calcium }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="phosphorus_{{ ing.id }}" value="{{ ing.phosphorus }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="a_phosphorus_{{ ing.id }}" value="{{ ing.a_phosphorus }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="salt_{{ ing.id }}" value="{{ ing.salt }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="sodium_{{ ing.id }}" value="{{ ing.sodium }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="chloride_{{ ing.id }}" value="{{ ing.chloride }}"></td>
+
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="lysine_{{ ing.id }}" value="{{ ing.lysine }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="methionine_{{ ing.id }}" value="{{ ing.methionine }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="cystine_{{ ing.id }}" value="{{ ing.cystine }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="methionine_cystine_{{ ing.id }}" value="{{ ing.methionine_cystine }}"></td>
+
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="threonine_{{ ing.id }}" value="{{ ing.threonine }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="arginine_{{ ing.id }}" value="{{ ing.arginine }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="leucine_{{ ing.id }}" value="{{ ing.leucine }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="tryptophan_{{ ing.id }}" value="{{ ing.tryptophan }}"></td>
+
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="linoleic_{{ ing.id }}" value="{{ ing.linoleic }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="1" name="choline_{{ ing.id }}" value="{{ ing.choline }}"></td>
+
+                <td><input class="border p-1 w-20 bg-red-50" type="number" step="0.01" name="cost_{{ ing.id }}" value="{{ ing.cost }}"></td>
+
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="min_inclusion_{{ ing.id }}" value="{{ ing.min_inclusion }}"></td>
+                <td><input class="border p-1 w-20" type="number" step="0.01" name="max_inclusion_{{ ing.id }}" value="{{ ing.max_inclusion }}"></td>
+
+            </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</form>
+</div>
+
+<script>
+document.getElementById('searchInput').addEventListener('keyup', function() {
+
+    let value = this.value.toLowerCase();
+
+    document.querySelectorAll('.ingredient-row').forEach(row => {
+
+        row.style.display =
+            row.innerText.toLowerCase().includes(value)
+            ? ''
+            : 'none';
+
+    });
+
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,195 @@
+{% extends 'formulation/base.html' %}
+{% block content %}
+
+<!-- Header -->
+<div class="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 rounded-xl shadow mb-6">
+    <h1 class="text-2xl font-bold">➕ Add Nutrient Requirement</h1>
+    <p class="text-green-100 mt-1">
+        Define MIN & MAX nutritional constraints (used in GA + LP optimizer)
+    </p>
+</div>
+
+<form method="post" class="space-y-8">
+    {% csrf_token %}
+
+    <!-- Animal Selection -->
+    <section class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">
+            🐔 Poultry Type & Life Stage
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Poultry Type -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Poultry Type
+                </label>
+                <select name="animal_type" required
+                        class="w-full border rounded-lg px-3 py-2">
+
+                    <option value="">Select Poultry</option>
+
+                    <option value="Broiler">Broiler</option>
+                    <option value="Layer">Layer</option>
+                    <option value="B Breeder">B Breeder</option>
+                    <option value="L Breeder">L Breeder</option>
+                    <option value="Turkey">Turkey</option>
+                    <option value="Duck">Duck</option>
+                    <option value="Quail">Quail</option>
+
+                </select>
+            </div>
+
+            <!-- Life Stage -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Life Stage
+                </label>
+                <select name="life_stage" required
+                        class="w-full border rounded-lg px-3 py-2">
+
+                    <option value="">Select Stage</option>
+
+                    <option value="Pre-Starter">Pre-Starter</option>
+                    <option value="Starter">Starter</option>
+                    <option value="Grower">Grower</option>
+                    <option value="Finisher">Finisher</option>
+
+                    <option value="Chick">Chick</option>
+                    <option value="Pre-Lay">Pre-Lay</option>
+                    <option value="Layer Phase 1">Layer Phase 1</option>
+                    <option value="Layer Phase 2">Layer Phase 2</option>
+
+                </select>
+            </div>
+
+        </div>
+    </section>
+
+   <!-- PROXIMATE -->
+<section class="bg-blue-50 rounded-xl shadow p-6">
+    <h2 class="text-xl font-semibold mb-6">🧪 Proximate Analysis</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div>{{ form.protein_min.label_tag }}{{ form.protein_min }}</div>
+        <div>{{ form.protein_max.label_tag }}{{ form.protein_max }}</div>
+
+        <div>{{ form.energy_min.label_tag }}{{ form.energy_min }}</div>
+        <div>{{ form.energy_max.label_tag }}{{ form.energy_max }}</div>
+
+        <div>{{ form.ether_extract_min.label_tag }}{{ form.ether_extract_min }}</div>
+        <div>{{ form.ether_extract_max.label_tag }}{{ form.ether_extract_max }}</div>
+
+        <div>{{ form.crude_fiber_min.label_tag }}{{ form.crude_fiber_min }}</div>
+        <div>{{ form.crude_fiber_max.label_tag }}{{ form.crude_fiber_max }}</div>
+
+    </div>
+</section>
+
+<!-- MINERALS -->
+<section class="bg-blue-50 rounded-xl shadow p-6">
+    <h2 class="text-xl font-semibold mb-6">🧂 Minerals</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div>{{ form.calcium_min.label_tag }}{{ form.calcium_min }}</div>
+        <div>{{ form.calcium_max.label_tag }}{{ form.calcium_max }}</div>
+
+        <div>{{ form.phosphorus_min.label_tag }}{{ form.phosphorus_min }}</div>
+        <div>{{ form.phosphorus_max.label_tag }}{{ form.phosphorus_max }}</div>
+
+        <div>{{ form.a_phosphorus_min.label_tag }}{{ form.a_phosphorus_min }}</div>
+        <div>{{ form.a_phosphorus_max.label_tag }}{{ form.a_phosphorus_max }}</div>
+
+        <div>{{ form.sodium_min.label_tag }}{{ form.sodium_min }}</div>
+        <div>{{ form.sodium_max.label_tag }}{{ form.sodium_max }}</div>
+
+        <div>{{ form.chloride_min.label_tag }}{{ form.chloride_min }}</div>
+        <div>{{ form.chloride_max.label_tag }}{{ form.chloride_max }}</div>
+
+        <div>{{ form.salt_min.label_tag }}{{ form.salt_min }}</div>
+        <div>{{ form.salt_max.label_tag }}{{ form.salt_max }}</div>
+
+    </div>
+</section>
+
+<!-- AMINO ACIDS -->
+<section class="bg-blue-50 rounded-xl shadow p-6">
+    <h2 class="text-xl font-semibold mb-6">🧬 Amino Acids</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div>{{ form.lysine_min.label_tag }}{{ form.lysine_min }}</div>
+        <div>{{ form.lysine_max.label_tag }}{{ form.lysine_max }}</div>
+
+        <div>{{ form.methionine_min.label_tag }}{{ form.methionine_min }}</div>
+        <div>{{ form.methionine_max.label_tag }}{{ form.methionine_max }}</div>
+
+        <div>{{ form.threonine_min.label_tag }}{{ form.threonine_min }}</div>
+        <div>{{ form.threonine_max.label_tag }}{{ form.threonine_max }}</div>
+
+        <div>{{ form.arginine_min.label_tag }}{{ form.arginine_min }}</div>
+        <div>{{ form.arginine_max.label_tag }}{{ form.arginine_max }}</div>
+
+        <div>{{ form.leucine_min.label_tag }}{{ form.leucine_min }}</div>
+        <div>{{ form.leucine_max.label_tag }}{{ form.leucine_max }}</div>
+
+        <div>{{ form.tryptophan_min.label_tag }}{{ form.tryptophan_min }}</div>
+        <div>{{ form.tryptophan_max.label_tag }}{{ form.tryptophan_max }}</div>
+
+    </div>
+</section>
+
+<!-- METHIONINE + CYSTINE -->
+<section class="bg-blue-50 rounded-xl shadow p-6">
+    <h2 class="text-xl font-semibold mb-6">
+        🧬 Methionine + Cystine
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div>
+            {{ form.methionine_cystine_min.label_tag }}
+            {{ form.methionine_cystine_min }}
+        </div>
+
+        <div>
+            {{ form.methionine_cystine_max.label_tag }}
+            {{ form.methionine_cystine_max }}
+        </div>
+
+    </div>
+</section>
+
+<!-- OTHERS -->
+<section class="bg-blue-50 rounded-xl shadow p-6">
+    <h2 class="text-xl font-semibold mb-6">💊 Others</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div>{{ form.linoleic_min.label_tag }}{{ form.linoleic_min }}</div>
+        <div>{{ form.linoleic_max.label_tag }}{{ form.linoleic_max }}</div>
+
+        <div>{{ form.choline_min.label_tag }}{{ form.choline_min }}</div>
+        <div>{{ form.choline_max.label_tag }}{{ form.choline_max }}</div>
+
+    </div>
+</section>
+
+    <!-- Submit -->
+    <div class="flex justify-between items-center">
+        <a href="{% url 'index' %}" class="text-blue-600 hover:underline">
+            ← Back
+        </a>
+
+        <button type="submit"
+                class="bg-green-600 text-white px-8 py-3 rounded-lg">
+            💾 Save Requirement
+        </button>
+    </div>
+
+</form>
+
+{% endblock %}

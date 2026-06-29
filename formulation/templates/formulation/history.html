@@ -1,0 +1,244 @@
+{% extends "formulation/base.html" %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto space-y-6">
+
+```
+<!-- Header -->
+
+<div class="bg-gradient-to-r from-blue-600 to-indigo-700
+            text-white p-6 rounded-2xl shadow-lg">
+
+    <h1 class="text-3xl font-bold">
+        📜 Feed Formula History
+    </h1>
+
+    <p class="text-blue-100 mt-2">
+        View, manage and download previously optimized feed formulations.
+    </p>
+
+</div>
+
+<!-- Stats Cards -->
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    <div class="bg-white rounded-xl p-6 shadow">
+
+        <div class="text-gray-500 text-sm">
+            Total Formulas
+        </div>
+
+        <div class="text-3xl font-bold text-blue-600 mt-2">
+            {{ formulas.count }}
+        </div>
+
+    </div>
+
+    <div class="bg-white rounded-xl p-6 shadow">
+
+        <div class="text-gray-500 text-sm">
+            Latest Formula
+        </div>
+
+        <div class="text-lg font-semibold text-green-600 mt-2">
+
+            {% if formulas %}
+                {{ formulas.0.animal_type }}
+            {% else %}
+                --
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <div class="bg-white rounded-xl p-6 shadow">
+
+        <div class="text-gray-500 text-sm">
+            Optimization Runs
+        </div>
+
+        <div class="text-3xl font-bold text-purple-600 mt-2">
+            {{ formulas.count }}
+        </div>
+
+    </div>
+
+</div>
+
+{% if formulas %}
+
+<!-- Search -->
+
+<div class="bg-white rounded-xl shadow p-4">
+
+    <input
+        type="text"
+        id="historySearch"
+        placeholder="Search Animal Type, Life Stage or Optimization ID..."
+        class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+
+</div>
+
+<!-- Table -->
+
+<div class="bg-white rounded-xl shadow overflow-hidden">
+
+    <div class="overflow-x-auto">
+
+        <table class="min-w-full">
+
+            <thead class="bg-gray-100">
+
+                <tr>
+
+                    <th class="px-6 py-4 text-left">
+                        Date
+                    </th>
+
+                    <th class="px-6 py-4 text-left">
+                        Animal
+                    </th>
+
+                    <th class="px-6 py-4 text-left">
+                        Stage
+                    </th>
+
+                    <th class="px-6 py-4 text-left">
+                        Optimization ID
+                    </th>
+
+                    <th class="px-6 py-4 text-left">
+                        Run
+                    </th>
+
+                    <th class="px-6 py-4 text-left">
+                        Cost (₹)
+                    </th>
+
+                    <th class="px-6 py-4 text-center">
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="historyTable">
+
+                {% for f in formulas %}
+
+                <tr class="border-b hover:bg-gray-50">
+
+                    <td class="px-6 py-4">
+                        {{ f.created_at|date:"d M Y H:i" }}
+                    </td>
+
+                    <td class="px-6 py-4 font-medium">
+                        {{ f.animal_type }}
+                    </td>
+
+                    <td class="px-6 py-4">
+                        {{ f.life_stage }}
+                    </td>
+
+                    <td class="px-6 py-4 font-mono text-blue-600">
+                        {{ f.optimization_id }}
+                    </td>
+
+                    <td class="px-6 py-4">
+                        Run {{ f.run_number }}
+                    </td>
+
+                    <td class="px-6 py-4 font-bold text-green-600">
+                        ₹ {{ f.total_cost|floatformat:2 }}
+                    </td>
+
+                    <td class="px-6 py-4">
+
+                        <div class="flex justify-center gap-2">
+
+                            <!-- View -->
+
+                            <a href="{% url 'formula_detail' f.id %}"
+                               class="bg-blue-500 hover:bg-blue-600
+                                      text-white px-3 py-2 rounded-lg text-sm">
+
+                                👁 View
+
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% else %}
+
+<div class="bg-white rounded-xl shadow p-12 text-center">
+
+    <div class="text-6xl mb-4">
+        📜
+    </div>
+
+    <h3 class="text-2xl font-bold text-gray-700">
+
+        No Formulas Found
+
+    </h3>
+
+    <p class="text-gray-500 mt-2">
+
+        Start your first optimization to create feed formulas.
+
+    </p>
+
+    <a href="{% url 'optimize_feed' %}"
+       class="inline-block mt-6
+              bg-yellow-500 hover:bg-yellow-600
+              text-white px-6 py-3 rounded-lg">
+
+        ⚙️ Optimize Feed
+
+    </a>
+
+</div>
+
+{% endif %}
+```
+
+</div>
+
+<script>
+
+document.getElementById('historySearch')?.addEventListener('keyup', function() {
+
+    let value = this.value.toLowerCase();
+
+    document.querySelectorAll('#historyTable tr').forEach(function(row){
+
+        row.style.display =
+            row.innerText.toLowerCase().includes(value)
+            ? ''
+            : 'none';
+
+    });
+
+});
+
+</script>
+
+{% endblock %}
