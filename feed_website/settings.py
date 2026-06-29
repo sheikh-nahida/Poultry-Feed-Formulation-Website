@@ -79,9 +79,20 @@ WSGI_APPLICATION = 'feed_website.wsgi.application'
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL")
+         default="postgresql://postgres:Nahida@14@localhost:5432/poultry_feed_db"
     )
 }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "poultry_feed_db",
+            "USER": "postgres",
+            "PASSWORD": "Nahida@14",
+            "HOST": "localhost",
+            "PORT": "5432",
+        }
+    }
 # =====================================
 # PASSWORD VALIDATION
 # =====================================
