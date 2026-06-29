@@ -1,3 +1,5 @@
+import os
+
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -6,7 +8,6 @@ SECRET_KEY = os.environ.get(
     "SECRET_KEY",
     "django-insecure-8ijig6_cy*9mi^2hwyy%2k#x+v2ja!puz3^6r39tb*gi%n1(d5"
 )
-import os
 
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
@@ -75,15 +76,11 @@ WSGI_APPLICATION = 'feed_website.wsgi.application'
 # =====================================
 # DATABASE
 # =====================================
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'poultry_feed_db',
-        'USER': 'postgres',
-        'PASSWORD': 'Nahida@14',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL")
+    )
 }
 # =====================================
 # PASSWORD VALIDATION
@@ -124,6 +121,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
