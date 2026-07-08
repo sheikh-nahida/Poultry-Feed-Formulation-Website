@@ -5,9 +5,9 @@ class Command(BaseCommand):
     help = "Create or reset admin user"
 
     def handle(self, *args, **kwargs):
-        username = "admin"
-        password = "Admin@12345"
-        email = "admin@example.com"
+        username = "Nahida"
+        password = "nahida@12345"
+        email = "sheikhnahida14@gmail.com"
 
         user, created = User.objects.get_or_create(username=username)
 
