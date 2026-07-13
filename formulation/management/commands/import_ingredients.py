@@ -21,7 +21,7 @@ class Command(BaseCommand):
         # Project root directory
         BASE_DIR = Path(__file__).resolve().parents[3]
 
-        # Excel file inside GitHub repository
+        # Excel file path
         file_path = BASE_DIR / "data" / "Ingredients Name.xlsx"
 
         self.stdout.write(f"Reading: {file_path}")
@@ -32,11 +32,10 @@ class Command(BaseCommand):
             )
             return
 
+        # Your Excel has headers on row 2
         df = pd.read_excel(file_path, header=1)
 
-        # =========================
-        # CLEAN COLUMN NAMES
-        # =========================
+        # Clean column names
         df.columns = (
             df.columns
             .str.strip()
@@ -49,9 +48,7 @@ class Command(BaseCommand):
 
         print("FOUND COLUMNS:", list(df.columns))
 
-        # =========================
-        # DETECT NAME COLUMN
-        # =========================
+        # Detect ingredient name column
         if "name" in df.columns:
             name_col = "name"
         elif "ingredient" in df.columns:
@@ -63,12 +60,12 @@ class Command(BaseCommand):
         else:
             self.stdout.write(
                 self.style.ERROR("❌ No ingredient name column found")
-        )
-        return
+            )
+            return
 
-        # =========================
-        # LOOP THROUGH ROWS
-        # =========================
+        imported = 0
+
+        # Import rows
         for _, row in df.iterrows():
 
             name = str(row[name_col]).strip().upper()
@@ -79,47 +76,90 @@ class Command(BaseCommand):
             protein = self.safe_float(row.get("protein_pct"))
             energy = self.safe_float(row.get("energy_kcal_per_kg"))
 
-            ether_extract = self.safe_float(row.get("ether_extract_pct"))
-            crude_fiber = self.safe_float(row.get("crude_fibre_pct"))
+            ether_extract = self.safe_float(
+                row.get("etherextract_pct")
+            )
 
-            calcium = self.safe_float(row.get("calcium_pct"))
-            phosphorus = self.safe_float(row.get("phosphorus_pct"))
-            a_phosphorus = self.safe_float(row.get("a_phosphorus_pct"))
+            crude_fiber = self.safe_float(
+                row.get("crudefiber_pct")
+            )
 
-            lysine = self.safe_float(row.get("lysine_pct"))
-            methionine = self.safe_float(row.get("methionine_pct"))
-            cystine = self.safe_float(row.get("cystine_pct"))
+            calcium = self.safe_float(
+                row.get("calcium_pct")
+            )
 
-            methionine_cystine = self.safe_float(row.get("methionine_cystine__pct"))
+            phosphorus = self.safe_float(
+                row.get("phosphorus_pct")
+            )
 
-            threonine = self.safe_float(row.get("threonine_pct"))
-            arginine = self.safe_float(row.get("arginine_pct"))
-            leucine = self.safe_float(row.get("leucine_pct"))
-            tryptophan = self.safe_float(row.get("tryptophan_pct"))
+            a_phosphorus = self.safe_float(
+                row.get("aphosp_pct")
+            )
 
-            linoleic = self.safe_float(row.get("linoleic_pct"))
-            choline = self.safe_float(row.get("choline_pct"))
+            lysine = self.safe_float(
+                row.get("lysine_pct")
+            )
 
-            sodium = self.safe_float(row.get("sodium_pct"))
-            chloride = self.safe_float(row.get("chloride_pct"))
-            salt = self.safe_float(row.get("salt_pct"))
+            methionine = self.safe_float(
+                row.get("methionine_pct")
+            )
 
-            cost = self.safe_float(row.get("cost_per_kg"))
+            cystine = self.safe_float(
+                row.get("cystine_pct")
+            )
 
+            methionine_cystine = self.safe_float(
+                row.get("m+c__pct")
+            )
+
+            arginine = self.safe_float(
+                row.get("arginine_pct")
+            )
+
+            leucine = self.safe_float(
+                row.get("leucine_pct")
+            )
+
+            threonine = self.safe_float(
+                row.get("threonine_pct")
+            )
+
+            tryptophan = self.safe_float(
+                row.get("tryptophan_pct")
+            )
+
+            linoleic = self.safe_float(
+                row.get("linoleic_pct")
+            )
+
+            sodium = self.safe_float(
+                row.get("sodium_pct")
+            )
+
+            chloride = self.safe_float(
+                row.get("chloride_pct")
+            )
+
+            salt = self.safe_float(
+                row.get("salt_pct")
+            )
+
+            # Correct cost column
+            cost = self.safe_float(
+                row.get("total_price_per_kg")
+            )
+
+            # If cost missing, use 1 instead of skipping
             if cost <= 0:
-                print(f"Skipping {name} (invalid cost)")
-                continue
+                cost = 1
 
-            min_inclusion = self.safe_float(row.get("min_inclusion"))
-            max_inclusion = self.safe_float(row.get("max_inclusion"))
+            min_inclusion = self.safe_float(
+                row.get("inclusion_rate")
+            )
 
-            if max_inclusion <= 1:
-                min_inclusion *= 100
-                max_inclusion *= 100
+            max_inclusion = min_inclusion
 
-            if min_inclusion > max_inclusion:
-                print(f"Invalid inclusion range for {name}")
-                continue
+            print("Saving:", name)
 
             Ingredient.objects.update_or_create(
                 name=name,
@@ -140,7 +180,6 @@ class Command(BaseCommand):
                     "leucine": leucine,
                     "tryptophan": tryptophan,
                     "linoleic": linoleic,
-                    "choline": choline,
                     "sodium": sodium,
                     "chloride": chloride,
                     "salt": salt,
@@ -150,4 +189,10 @@ class Command(BaseCommand):
                 },
             )
 
-        self.stdout.write(self.style.SUCCESS("✅ Ingredients imported successfully"))
+            imported += 1
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"✅ Ingredients imported successfully: {imported}"
+            )
+        )
