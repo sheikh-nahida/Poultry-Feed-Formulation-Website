@@ -3,7 +3,7 @@
 from django.core.management.base import BaseCommand
 import pandas as pd
 from formulation.models import NutrientRequirement
-
+from pathlib import Path
 
 class Command(BaseCommand):
 
@@ -31,11 +31,15 @@ class Command(BaseCommand):
         # =========================
         # FILE PATH
         # =========================
-        file_path = r"C:\Users\welcome\feed_website\formulation\management\commands\nutrient_constraints.xlsx"
-
-        print("\nUsing file:")
-        print(file_path)
-
+        from pathlib import Path
+        BASE_DIR = Path(__file__).resolve().parents[3]
+        file_path = BASE_DIR / "data" / "nutrient_constraints.xlsx"
+        self.stdout.write(f"\nUsing file: {file_path}")
+        if not file_path.exists():
+             self.stdout.write(
+                self.style.ERROR(f"File not found: {file_path}")
+        )
+        return
         # =========================
         # LOAD EXCEL
         # =========================
