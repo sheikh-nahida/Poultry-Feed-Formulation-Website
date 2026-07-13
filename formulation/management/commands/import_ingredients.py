@@ -1,4 +1,4 @@
-# formulation/management/commands/import_ingredients.py
+from pathlib import Path
 
 from django.core.management.base import BaseCommand
 import pandas as pd
@@ -9,7 +9,6 @@ class Command(BaseCommand):
     help = "Import ingredients from Excel"
 
     def safe_float(self, val, default=0):
-        """Convert safely to float"""
         try:
             if pd.isna(val) or val == "":
                 return default
@@ -19,7 +18,19 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        file_path = r"C:\Users\welcome\feed_website\formulation\management\commands\Ingredients Name.xlsx"
+        # Project root directory
+        BASE_DIR = Path(__file__).resolve().parents[3]
+
+        # Excel file inside GitHub repository
+        file_path = BASE_DIR / "data" / "Ingredients Name.xlsx"
+
+        self.stdout.write(f"Reading: {file_path}")
+
+        if not file_path.exists():
+            self.stdout.write(
+                self.style.ERROR(f"Excel file not found: {file_path}")
+            )
+            return
 
         df = pd.read_excel(file_path)
 
@@ -59,9 +70,6 @@ class Command(BaseCommand):
             if not name or name == "NAN":
                 continue
 
-            # =========================
-            # NUTRIENTS
-            # =========================
             protein = self.safe_float(row.get("protein_pct"))
             energy = self.safe_float(row.get("energy_kcal_per_kg"))
 
@@ -90,33 +98,23 @@ class Command(BaseCommand):
             chloride = self.safe_float(row.get("chloride_pct"))
             salt = self.safe_float(row.get("salt_pct"))
 
-            # =========================
-            # COST (FIXED)
-            # =========================
             cost = self.safe_float(row.get("cost_per_kg"))
 
             if cost <= 0:
-                print(f"❌ Skipping {name} (invalid cost)")
+                print(f"Skipping {name} (invalid cost)")
                 continue
 
-            # =========================
-            # INCLUSION (FIXED)
-            # =========================
             min_inclusion = self.safe_float(row.get("min_inclusion"))
             max_inclusion = self.safe_float(row.get("max_inclusion"))
 
-            # Convert decimal → percentage if needed
             if max_inclusion <= 1:
                 min_inclusion *= 100
                 max_inclusion *= 100
 
             if min_inclusion > max_inclusion:
-                print(f"❌ Invalid inclusion range for {name}")
+                print(f"Invalid inclusion range for {name}")
                 continue
 
-            # =========================
-            # SAVE TO DATABASE
-            # =========================
             Ingredient.objects.update_or_create(
                 name=name,
                 defaults={
@@ -124,32 +122,26 @@ class Command(BaseCommand):
                     "energy": energy,
                     "ether_extract": ether_extract,
                     "crude_fiber": crude_fiber,
-
                     "calcium": calcium,
                     "phosphorus": phosphorus,
                     "a_phosphorus": a_phosphorus,
-
                     "lysine": lysine,
                     "methionine": methionine,
                     "cystine": cystine,
                     "methionine_cystine": methionine_cystine,
-
                     "threonine": threonine,
                     "arginine": arginine,
                     "leucine": leucine,
                     "tryptophan": tryptophan,
-
                     "linoleic": linoleic,
                     "choline": choline,
-
                     "sodium": sodium,
                     "chloride": chloride,
                     "salt": salt,
-
                     "cost": cost,
                     "min_inclusion": min_inclusion,
                     "max_inclusion": max_inclusion,
-                }
+                },
             )
 
         self.stdout.write(self.style.SUCCESS("✅ Ingredients imported successfully"))
