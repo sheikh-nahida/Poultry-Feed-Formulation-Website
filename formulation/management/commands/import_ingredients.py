@@ -32,7 +32,7 @@ class Command(BaseCommand):
             )
             return
 
-        df = pd.read_excel(file_path)
+        df = pd.read_excel(file_path, header=1)
 
         # =========================
         # CLEAN COLUMN NAMES
