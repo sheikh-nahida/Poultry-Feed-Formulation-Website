@@ -56,9 +56,15 @@ class Command(BaseCommand):
             name_col = "name"
         elif "ingredient" in df.columns:
             name_col = "ingredient"
+        elif "poultary_feed_ingredients" in df.columns:
+            name_col = "poultary_feed_ingredients"
+        elif "poultry_feed_ingredients" in df.columns:
+            name_col = "poultry_feed_ingredients"
         else:
-            self.stdout.write(self.style.ERROR("❌ No ingredient name column found"))
-            return
+            self.stdout.write(
+                self.style.ERROR("❌ No ingredient name column found")
+        )
+        return
 
         # =========================
         # LOOP THROUGH ROWS
