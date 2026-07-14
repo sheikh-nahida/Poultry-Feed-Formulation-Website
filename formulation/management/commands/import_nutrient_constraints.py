@@ -36,10 +36,10 @@ class Command(BaseCommand):
         file_path = BASE_DIR / "data" / "nutrient_constraints.xlsx"
         self.stdout.write(f"\nUsing file: {file_path}")
         if not file_path.exists():
-             self.stdout.write(
+            self.stdout.write(
                 self.style.ERROR(f"File not found: {file_path}")
-        )
-        return
+            )
+            return
         # =========================
         # LOAD EXCEL
         # =========================

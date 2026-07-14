@@ -1,198 +1,107 @@
 from pathlib import Path
 
-from django.core.management.base import BaseCommand
 import pandas as pd
+from django.core.management.base import BaseCommand
+
 from formulation.models import Ingredient
 
 
 class Command(BaseCommand):
     help = "Import ingredients from Excel"
 
-    def safe_float(self, val, default=0):
+    def safe_float(self, value, default=0):
         try:
-            if pd.isna(val) or val == "":
+            if pd.isna(value) or value == "":
                 return default
-            return float(val)
+            return float(value)
         except:
             return default
 
     def handle(self, *args, **kwargs):
 
-        # Project root directory
         BASE_DIR = Path(__file__).resolve().parents[3]
-
-        # Excel file path
         file_path = BASE_DIR / "data" / "Ingredients Name.xlsx"
 
         self.stdout.write(f"Reading: {file_path}")
 
-        if not file_path.exists():
-            self.stdout.write(
-                self.style.ERROR(f"Excel file not found: {file_path}")
-            )
-            return
-
-        # Your Excel has headers on row 2
+        # Header is on SECOND row
         df = pd.read_excel(file_path, header=1)
 
         # Clean column names
         df.columns = (
-            df.columns
+            df.columns.astype(str)
             .str.strip()
-            .str.lower()
-            .str.replace(" ", "_")
-            .str.replace("%", "_pct")
-            .str.replace("/", "_per_")
-            .str.replace(".", "", regex=False)
+            .str.upper()
         )
 
-        print("FOUND COLUMNS:", list(df.columns))
-
-        # Detect ingredient name column
-        if "name" in df.columns:
-            name_col = "name"
-        elif "ingredient" in df.columns:
-            name_col = "ingredient"
-        elif "poultary_feed_ingredients" in df.columns:
-            name_col = "poultary_feed_ingredients"
-        elif "poultry_feed_ingredients" in df.columns:
-            name_col = "poultry_feed_ingredients"
-        else:
-            self.stdout.write(
-                self.style.ERROR("❌ No ingredient name column found")
-            )
-            return
+        print("\nColumns Found:")
+        print(df.columns.tolist())
 
         imported = 0
 
-        # Import rows
         for _, row in df.iterrows():
 
-            name = str(row[name_col]).strip().upper()
+            name = str(row["NAME"]).strip().upper()
 
-            if not name or name == "NAN":
+            if name == "" or name == "NAN":
                 continue
 
-            protein = self.safe_float(row.get("protein_pct"))
-            energy = self.safe_float(row.get("energy_kcal_per_kg"))
+            inclusion = self.safe_float(row["INCLUSION RATE"])
 
-            ether_extract = self.safe_float(
-                row.get("etherextract_pct")
-            )
+            price = self.safe_float(row["TOTAL PRICE PER KG"])
 
-            crude_fiber = self.safe_float(
-                row.get("crudefiber_pct")
-            )
-
-            calcium = self.safe_float(
-                row.get("calcium_pct")
-            )
-
-            phosphorus = self.safe_float(
-                row.get("phosphorus_pct")
-            )
-
-            a_phosphorus = self.safe_float(
-                row.get("aphosp_pct")
-            )
-
-            lysine = self.safe_float(
-                row.get("lysine_pct")
-            )
-
-            methionine = self.safe_float(
-                row.get("methionine_pct")
-            )
-
-            cystine = self.safe_float(
-                row.get("cystine_pct")
-            )
-
-            methionine_cystine = self.safe_float(
-                row.get("m+c__pct")
-            )
-
-            arginine = self.safe_float(
-                row.get("arginine_pct")
-            )
-
-            leucine = self.safe_float(
-                row.get("leucine_pct")
-            )
-
-            threonine = self.safe_float(
-                row.get("threonine_pct")
-            )
-
-            tryptophan = self.safe_float(
-                row.get("tryptophan_pct")
-            )
-
-            linoleic = self.safe_float(
-                row.get("linoleic_pct")
-            )
-
-            sodium = self.safe_float(
-                row.get("sodium_pct")
-            )
-
-            chloride = self.safe_float(
-                row.get("chloride_pct")
-            )
-
-            salt = self.safe_float(
-                row.get("salt_pct")
-            )
-
-            # Correct cost column
-            cost = self.safe_float(
-                row.get("total_price_per_kg")
-            )
-
-            # If cost missing, use 1 instead of skipping
-            if cost <= 0:
-                cost = 1
-
-            min_inclusion = self.safe_float(
-                row.get("inclusion_rate")
-            )
-
-            max_inclusion = min_inclusion
-
-            print("Saving:", name)
+            # Skip invalid ingredients
+            if price <= 0:
+                print(f"Skipping {name} (Price <= 0)")
+                continue
 
             Ingredient.objects.update_or_create(
+
                 name=name,
+
                 defaults={
-                    "protein": protein,
-                    "energy": energy,
-                    "ether_extract": ether_extract,
-                    "crude_fiber": crude_fiber,
-                    "calcium": calcium,
-                    "phosphorus": phosphorus,
-                    "a_phosphorus": a_phosphorus,
-                    "lysine": lysine,
-                    "methionine": methionine,
-                    "cystine": cystine,
-                    "methionine_cystine": methionine_cystine,
-                    "threonine": threonine,
-                    "arginine": arginine,
-                    "leucine": leucine,
-                    "tryptophan": tryptophan,
-                    "linoleic": linoleic,
-                    "sodium": sodium,
-                    "chloride": chloride,
-                    "salt": salt,
-                    "cost": cost,
-                    "min_inclusion": min_inclusion,
-                    "max_inclusion": max_inclusion,
-                },
+
+                    "protein": self.safe_float(row["PROTEIN%"]),
+                    "energy": self.safe_float(row["ENERGY KCAL/KG"]),
+
+                    "ether_extract": self.safe_float(row["ETHER.EXTRACT%"]),
+                    "crude_fiber": self.safe_float(row["CRUDE.FIBER%"]),
+
+                    "calcium": self.safe_float(row["CALCIUM%"]),
+                    "phosphorus": self.safe_float(row["PHOSPHORUS%"]),
+                    "a_phosphorus": self.safe_float(row["A.PHOSP.%"]),
+
+                    "lysine": self.safe_float(row["LYSINE%"]),
+                    "methionine": self.safe_float(row["METHIONINE%"]),
+                    "cystine": self.safe_float(row["CYSTINE%"]),
+                    "methionine_cystine": self.safe_float(row["M+C %"]),
+
+                    "threonine": self.safe_float(row["THREONINE%"]),
+                    "arginine": self.safe_float(row["ARGININE%"]),
+                    "leucine": self.safe_float(row["LEUCINE%"]),
+                    "tryptophan": self.safe_float(row["TRYPTOPHAN%"]),
+
+                    "linoleic": self.safe_float(row["LINOLEIC%"]),
+
+                    # Excel doesn't contain choline
+                    "choline": 0,
+
+                    "sodium": self.safe_float(row["SODIUM%"]),
+                    "chloride": self.safe_float(row["CHLORIDE%"]),
+                    "salt": self.safe_float(row["SALT%"]),
+
+                    "cost": price,
+
+                    # Your Excel has only one inclusion value
+                    "min_inclusion": 0,
+                    "max_inclusion": inclusion,
+                }
             )
 
             imported += 1
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"✅ Ingredients imported successfully: {imported}"
+                f"\n✅ Successfully imported {imported} ingredients."
             )
         )
