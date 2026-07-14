@@ -475,3 +475,18 @@ def formula_detail(request, pk):
             "items": items
         }
     )
+# =====================================================
+# TEMPORARY IMPORT DATA
+# =====================================================
+@login_required
+def import_data(request):
+    try:
+        call_command("import_ingredients")
+        call_command("import_nutrient_constraints")
+
+        return HttpResponse(
+            "✅ Ingredients and Nutrient Requirements imported successfully!"
+        )
+
+    except Exception as e:
+        return HttpResponse(f"❌ Error: {e}")

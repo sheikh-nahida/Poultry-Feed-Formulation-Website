@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='formulation_home'),
+
+    path('import-data/', views.import_data, name='import_data'),
     # ==========================
     # Ingredient management
     # ==========================
