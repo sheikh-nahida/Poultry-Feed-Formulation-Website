@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Min
 from django.http import HttpResponse
 from django.core.management import call_command
+import traceback
 
 from .models import (
     Ingredient,
@@ -486,9 +487,10 @@ def import_data(request):
         call_command("import_ingredients")
         call_command("import_nutrient_constraints")
 
-        return HttpResponse(
-            "✅ Ingredients and Nutrient Requirements imported successfully!"
-        )
+        return HttpResponse("SUCCESS")
 
-    except Exception as e:
-        return HttpResponse(f"❌ Error: {e}")
+    except Exception:
+        return HttpResponse(
+            "<pre>" + traceback.format_exc() + "</pre>",
+            content_type="text/html"
+        )
