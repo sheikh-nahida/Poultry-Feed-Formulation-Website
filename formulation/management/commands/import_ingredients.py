@@ -24,8 +24,8 @@ class Command(BaseCommand):
 
         self.stdout.write(f"Reading: {file_path}")
 
-        # Header is on SECOND row
-        df = pd.read_excel(file_path, header=1)
+        # Read first row as header
+        df = pd.read_excel(file_path, header=0)
 
         # Clean column names
         df.columns = (
@@ -34,68 +34,60 @@ class Command(BaseCommand):
             .str.upper()
         )
 
-        print("\nColumns Found:")
-        print(df.columns.tolist())
+        self.stdout.write(f"\nColumns Found:\n{df.columns.tolist()}")
 
         imported = 0
 
         for _, row in df.iterrows():
 
-            name = str(row["NAME"]).strip().upper()
+            # Ingredient name
+            name = str(row["INGREDIENT"]).strip().upper()
 
             if name == "" or name == "NAN":
                 continue
 
-            inclusion = self.safe_float(row["INCLUSION RATE"])
+            min_inclusion = self.safe_float(row["MIN_INCLUSION"])
+            max_inclusion = self.safe_float(row["MAX_INCLUSION"])
+            price = self.safe_float(row["COST_PER_KG"])
 
-            price = self.safe_float(row["TOTAL PRICE PER KG"])
-
-            # Skip invalid ingredients
             if price <= 0:
-                print(f"Skipping {name} (Price <= 0)")
+                print(f"Skipping {name} (Cost <= 0)")
                 continue
 
             Ingredient.objects.update_or_create(
-
                 name=name,
-
                 defaults={
-
                     "protein": self.safe_float(row["PROTEIN%"]),
                     "energy": self.safe_float(row["ENERGY KCAL/KG"]),
-
-                    "ether_extract": self.safe_float(row["ETHER.EXTRACT%"]),
-                    "crude_fiber": self.safe_float(row["CRUDE.FIBER%"]),
-
-                    "calcium": self.safe_float(row["CALCIUM%"]),
-                    "phosphorus": self.safe_float(row["PHOSPHORUS%"]),
-                    "a_phosphorus": self.safe_float(row["A.PHOSP.%"]),
 
                     "lysine": self.safe_float(row["LYSINE%"]),
                     "methionine": self.safe_float(row["METHIONINE%"]),
                     "cystine": self.safe_float(row["CYSTINE%"]),
-                    "methionine_cystine": self.safe_float(row["M+C %"]),
+                    "methionine_cystine": self.safe_float(row["METHIONINE_CYSTINE %"]),
 
-                    "threonine": self.safe_float(row["THREONINE%"]),
                     "arginine": self.safe_float(row["ARGININE%"]),
                     "leucine": self.safe_float(row["LEUCINE%"]),
+                    "threonine": self.safe_float(row["THREONINE%"]),
                     "tryptophan": self.safe_float(row["TRYPTOPHAN%"]),
 
+                    "ether_extract": self.safe_float(row["ETHER_EXTRACT%"]),
                     "linoleic": self.safe_float(row["LINOLEIC%"]),
+                    "crude_fiber": self.safe_float(row["CRUDE_FIBRE%"]),
 
-                    # Excel doesn't contain choline
-                    "choline": 0,
+                    "calcium": self.safe_float(row["CALCIUM%"]),
+                    "phosphorus": self.safe_float(row["PHOSPHORUS%"]),
+                    "a_phosphorus": self.safe_float(row["A_PHOSPHORUS%"]),
 
                     "sodium": self.safe_float(row["SODIUM%"]),
                     "chloride": self.safe_float(row["CHLORIDE%"]),
                     "salt": self.safe_float(row["SALT%"]),
 
-                    "cost": price,
+                    "choline": self.safe_float(row["CHOLINE%"]),
 
-                    # Your Excel has only one inclusion value
-                    "min_inclusion": 0,
-                    "max_inclusion": inclusion,
-                }
+                    "cost": price,
+                    "min_inclusion": min_inclusion,
+                    "max_inclusion": max_inclusion,
+                },
             )
 
             imported += 1
