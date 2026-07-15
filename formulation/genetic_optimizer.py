@@ -21,10 +21,10 @@ def genetic_feed_optimizer(
     animal_type,
     life_stage,
 
-    population_size=300,
-    generations=1000,
+    population_size=50,
+    generations=100,
 
-    elite_size=15,
+    elite_size=5,
 
     mutation_rate=0.10,
 
@@ -198,7 +198,7 @@ def genetic_feed_optimizer(
 
         sorted_idx = np.argsort(ch)[::-1]
 
-        keep_idx = sorted_idx[:max_active_ingredients]
+        keep_idx = set(sorted_idx[:max_active_ingredients])
 
         for i in range(len(ch)):
 
@@ -518,9 +518,9 @@ def genetic_feed_optimizer(
         )
 
         best = scored[0]
-
-        convergence.append(
-            round(best["cost"], 2)
+        if gen % 10 == 0:
+            convergence.append(
+                round(best["cost"], 2)
         )
 
         if (
