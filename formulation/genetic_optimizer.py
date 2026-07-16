@@ -30,7 +30,7 @@ def genetic_feed_optimizer(
 
     max_active_ingredients=19,
 
-    penalty_factor=100000
+    penalty_factor=10000
 ):
 
     print("\n" + "=" * 60)
@@ -567,7 +567,7 @@ def genetic_feed_optimizer(
 
                 idx = random.randint(0, n - 1)
 
-                child[idx] += random.uniform(-2, 2)
+                child[idx] += random.uniform(-5, 5)
 
             child = repair(child)
 
