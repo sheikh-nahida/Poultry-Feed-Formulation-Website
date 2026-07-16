@@ -24,7 +24,7 @@ def genetic_feed_optimizer(
     population_size=150,
     generations=200,
 
-    elite_size=8,
+    elite_size=5,
 
     mutation_rate=0.10,
 
