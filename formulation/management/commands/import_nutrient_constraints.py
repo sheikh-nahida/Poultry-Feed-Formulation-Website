@@ -45,7 +45,7 @@ class Command(BaseCommand):
         # =========================
         df = pd.read_excel(
             file_path,
-            sheet_name="Sheet1"
+            sheet_name="Nutrient_Constraints"
         )
 
         print("\nRows Loaded:")
