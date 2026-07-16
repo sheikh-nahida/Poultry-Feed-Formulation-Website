@@ -21,16 +21,16 @@ def genetic_feed_optimizer(
     animal_type,
     life_stage,
 
-    population_size=50,
-    generations=100,
+    population_size=150,
+    generations=200,
 
-    elite_size=5,
+    elite_size=8,
 
     mutation_rate=0.10,
 
     max_active_ingredients=19,
 
-    penalty_factor=10000
+    penalty_factor=100000
 ):
 
     print("\n" + "=" * 60)
@@ -567,7 +567,7 @@ def genetic_feed_optimizer(
 
                 idx = random.randint(0, n - 1)
 
-                child[idx] += random.uniform(-5, 5)
+                child[idx] += random.uniform(-2, 2)
 
             child = repair(child)
 
