@@ -5,7 +5,7 @@ urlpatterns = [
     path('', views.index, name='formulation_home'),
 
     path('import-data/', views.import_data, name='import_data'),
-    path("update-constraints/", views.update_constraints),
+    path("update-constraints/", views.import_data),
     # ==========================
     # Ingredient management
     # ==========================
