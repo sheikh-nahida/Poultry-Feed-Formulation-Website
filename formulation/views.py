@@ -484,13 +484,21 @@ def formula_detail(request, pk):
 @login_required
 def import_data(request):
     try:
+        # Delete old formulas first
+        FeedFormulaItem.objects.all().delete()
+        FeedFormula.objects.all().delete()
+
+        # Delete old nutrient requirements
+        NutrientRequirement.objects.all().delete()
+
+        # Import fresh data
         call_command("import_ingredients")
         call_command("import_nutrient_constraints")
 
-        return HttpResponse("SUCCESS")
+        return HttpResponse("Database updated successfully!")
 
     except Exception:
         return HttpResponse(
             "<pre>" + traceback.format_exc() + "</pre>",
-            content_type="text/html"
+            content_type="text/html",
         )
