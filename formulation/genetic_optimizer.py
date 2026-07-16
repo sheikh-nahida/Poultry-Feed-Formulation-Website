@@ -21,7 +21,7 @@ def genetic_feed_optimizer(
     animal_type,
     life_stage,
 
-    population_size=150,
+    population_size=125,
     generations=200,
 
     elite_size=5,
