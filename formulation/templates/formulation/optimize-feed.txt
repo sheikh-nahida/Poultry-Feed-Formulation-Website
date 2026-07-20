@@ -290,6 +290,14 @@
 
             <div style="height:400px;">
                 <canvas id="nutrientChart"></canvas>
+            <div class="bg-white p-6 rounded-xl shadow mt-6">
+
+                <h3 class="font-bold mb-4">
+                    Energy Comparison
+                </h3>
+
+                <div style="height:250px;">
+                    <canvas id="energyChart"></canvas>
             </div>
 
         </div>
@@ -406,6 +414,9 @@ new Chart(
 // NUTRIENT CHART (Horizontal)
 // =====================================================
 
+const filtered = Object.entries(nutrients).filter(
+    ([key]) => key !== "energy"
+);
 const nutrientLabels = Object.keys(nutrients);
 
 const achievedValues = Object.values(nutrients).map(v => v.achieved);
@@ -498,6 +509,65 @@ new Chart(
 
     }
 );
+
+const energy = nutrients["energy"];
+
+new Chart(document.getElementById("energyChart"), {
+
+    type: "bar",
+
+    data: {
+
+        labels: ["Energy"],
+
+        datasets: [
+
+            {
+                label: "Achieved",
+                data: [energy.achieved],
+                backgroundColor: "#4CAF50"
+            },
+
+            {
+                label: "Minimum",
+                data: [energy.min],
+                backgroundColor: "#EF5350"
+            },
+
+            {
+                label: "Maximum",
+                data: [energy.max],
+                backgroundColor: "#42A5F5"
+            }
+
+        ]
+
+    },
+
+    options: {
+
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+            legend: {
+                position: "top"
+            }
+        },
+
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: "kcal/kg"
+                }
+            }
+        }
+
+    }
+
+});
 //=====================================================
 // CONVERGENCE CHART
 // =====================================================
