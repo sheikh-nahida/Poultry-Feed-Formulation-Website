@@ -37,11 +37,13 @@ def safe_float(val, default):
 # HOME PAGE
 # =====================================================
 def index(request):
-
-    return render(
-        request,
-        "formulation/index.html"
-    )
+    try:
+        return render(request, "formulation/index.html")
+    except Exception:
+        return HttpResponse(
+            "<pre>" + traceback.format_exc() + "</pre>",
+            content_type="text/html"
+        )
 
 # =====================================================
 # REGISTER
