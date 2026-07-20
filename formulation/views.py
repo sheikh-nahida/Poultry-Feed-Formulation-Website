@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Min
 from django.http import HttpResponse
 from django.core.management import call_command
+from django.contrib.auth import login
 import traceback
 
 from .models import (
@@ -12,7 +13,7 @@ from .models import (
     FeedFormulaItem
 )
 
-from .forms import NutrientRequirementForm
+from .forms import NutrientRequirementForm, RegisterForm
 
 from .genetic_optimizer import (
     genetic_feed_optimizer,
@@ -42,6 +43,34 @@ def index(request):
         "formulation/index.html"
     )
 
+# =====================================================
+# REGISTER
+# =====================================================
+def register(request):
+
+    if request.method == "POST":
+
+        form = RegisterForm(request.POST)
+
+        if form.is_valid():
+
+            user = form.save()
+
+            login(request, user)
+
+            return redirect("formulation_home")
+
+    else:
+
+        form = RegisterForm()
+
+    return render(
+        request,
+        "registration/register.html",
+        {
+            "form": form
+        }
+    )
 
 # =====================================================
 # EDIT INGREDIENTS

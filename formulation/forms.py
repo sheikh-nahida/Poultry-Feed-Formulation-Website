@@ -1,5 +1,7 @@
 from django import forms
 from .models import Ingredient, NutrientRequirement
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 
 class IngredientForm(forms.ModelForm):
@@ -43,3 +45,14 @@ class NutrientRequirementForm(forms.ModelForm):
         for name, field in self.fields.items():
             if name.endswith("_min") or name.endswith("_max"):
                 field.required = True
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "email",
+            "password1",
+            "password2",
+        ]
