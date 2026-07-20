@@ -414,14 +414,23 @@ new Chart(
 // NUTRIENT CHART (Horizontal)
 // =====================================================
 
-const filtered = Object.entries(nutrients).filter(
-    ([key]) => key !== "energy"
+const filteredNutrients = Object.fromEntries(
+    Object.entries(nutrients).filter(([key]) => key !== "energy")
 );
-const nutrientLabels = Object.keys(nutrients);
 
-const achievedValues = Object.values(nutrients).map(v => v.achieved);
-const minimumValues  = Object.values(nutrients).map(v => v.min || 0);
-const maximumValues  = Object.values(nutrients).map(v => v.max ?? null);
+const nutrientLabels = Object.keys(filteredNutrients);
+
+const achievedValues = nutrientLabels.map(
+    key => filteredNutrients[key].achieved
+);
+
+const minimumValues = nutrientLabels.map(
+    key => filteredNutrients[key].min ?? 0
+);
+
+const maximumValues = nutrientLabels.map(
+    key => filteredNutrients[key].max ?? null
+);
 
 new Chart(
     document.getElementById("nutrientChart"),
