@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='formulation_home'),
+    path("register/", views.register, name="register"),
 
     path('import-data/', views.import_data, name='import_data'),
     path("update-constraints/", views.import_data),

@@ -40,9 +40,20 @@
             </button>
         </form>
 
-        <p class="mt-4 text-sm text-gray-500 text-center">
-            Forgot password? Contact the admin.
+        <!-- Sign Up Link -->
+        <p class="mt-6 text-center text-gray-600">
+            Don't have an account?
+            <a href="{% url 'register' %}"
+               class="text-blue-600 font-semibold hover:underline">
+                Sign Up
+            </a>
         </p>
+
+        <!-- Forgot Password -->
+        <p class="mt-3 text-sm text-gray-500 text-center">
+            Forgot password? Contact the administrator.
+        </p>
+
     </div>
 
 </body>
