@@ -301,7 +301,7 @@
                 GA Convergence
             </h3>
 
-            <div style="height:400px;">
+            <div style="height:700px;">
                 <canvas id="convergenceChart"></canvas>
             </div>
 
@@ -402,67 +402,103 @@ new Chart(
 );
 
 
+//  =====================================================
+// NUTRIENT CHART (Horizontal)
 // =====================================================
-// NUTRIENT CHART
-// =====================================================
+
+const nutrientLabels = Object.keys(nutrients);
+
+const achievedValues = Object.values(nutrients).map(v => v.achieved);
+const minimumValues  = Object.values(nutrients).map(v => v.min || 0);
+const maximumValues  = Object.values(nutrients).map(v => v.max ?? null);
+
 new Chart(
-
-    document.getElementById(
-        "nutrientChart"
-    ),
-
+    document.getElementById("nutrientChart"),
     {
-
         type: "bar",
 
         data: {
-
-            labels: Object.keys(
-                nutrients
-            ),
+            labels: nutrientLabels,
 
             datasets: [
 
                 {
-
                     label: "Achieved",
-
-                    data: Object.values(
-                        nutrients
-                    ).map(
-                        v => v.achieved
-                    ),
-
-                    backgroundColor: "#59A14F"
+                    data: achievedValues,
+                    backgroundColor: "#4CAF50"
                 },
 
                 {
-
                     label: "Minimum",
+                    data: minimumValues,
+                    backgroundColor: "#EF5350"
+                },
 
-                    data: Object.values(
-                        nutrients
-                    ).map(
-                        v => v.min || 0
-                    ),
-
-                    backgroundColor: "#E15759"
+                {
+                    label: "Maximum",
+                    data: maximumValues,
+                    backgroundColor: "#42A5F5"
                 }
+
             ]
         },
 
         options: {
 
+            indexAxis: 'y',
+
             responsive: true,
 
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    position: 'top'
+                },
+
+                tooltip: {
+                    enabled: true
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    beginAtZero: true,
+
+                    title: {
+
+                        display: true,
+                        text: "Nutrient Value"
+
+                    }
+
+                },
+
+                y: {
+
+                    ticks: {
+
+                        font: {
+
+                            size: 13
+
+                        }
+
+                    }
+
+                }
+
+            }
 
         }
+
     }
 );
-
-
-// =====================================================
+//=====================================================
 // CONVERGENCE CHART
 // =====================================================
 new Chart(
